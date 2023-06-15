@@ -1,40 +1,35 @@
 mod functions;
 
-macro_rules! _test {
-    ($e:expr) => {
-        println!("{}={}", stringify!($e), $e)
-    };
-}
+use functions::math_manipulation::{factorial, power, sin, cos};
 
-fn factorial(n: u32) -> f64 {
-    /* if n <= 1 {
-        1.0
-    } else {
-        (2..=n).fold(1.0, |acc: f64, x: u32| acc * x as f64)
-    } */
-
-    (2..=n).fold(1.0, |acc: f64, x: u32| acc * x as f64)
-}
-
-fn power(x: f64, n: u32) -> f64 {
-    (0..n).fold(1.0, |acc: f64, _| acc * x)
-}
-
-fn sin(x: f64) -> f64 {
+fn sine_cosine(x: f64) -> (f64, f64) {
     const TERMS: u32 = 10;
-    let mut result: f64 = 0.0;
-    let mut sign: f64 = 1.0;
+    let mut sin_result: f64 = 0.0;
+    let mut cos_result: f64 = 0.0;
+    let mut sin_sign: f64 = 1.0;
+    let mut cos_sign: f64 = 1.0;
 
     for i in 0..TERMS {
-        let term: f64 = power(x, 2 * i + 1) / factorial(2 * i + 1);
-        result += sign * term;
-        sign *= -1.0;
+        let sin_term: f64 = power(x, 2 * i + 1) / factorial(2 * i + 1);
+        let cos_term: f64 = power(x, 2 * i) / factorial(2 * i);
+
+        sin_result += sin_sign * sin_term;
+        cos_result += cos_sign * cos_term;
+
+        sin_sign *= -1.0;
+        cos_sign *= -1.0;
     }
 
-    result
+    (sin_result, cos_result)
 }
+
+// sin: sum of { (-1)^n * x^(2n+1) / (2n+1)! }: n -> 0..=inf
+// cos: sum of { (-1)^n * x^ 2n    / (2n  )! }: n -> 0..=inf
+// create a new function named sin_cos which returns both sin and cos simultaneously taking above two function's optimizations into account
 
 fn main() {
     let angle: f64 = 0.5; // Angle in radians
-    println!("{}\n{}", angle.sin(), sin(angle));
+    let sc = sine_cosine(angle);
+    println!("sin: {}\n     {}", angle.sin(), sc.0);
+    println!("cos: {}\n     {}", angle.cos(), sc.1)
 }

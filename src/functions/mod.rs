@@ -7,3 +7,4 @@ pub mod read_write;
 pub mod base64;
 pub mod conversions;
 pub mod compression;
+pub mod macros_;
