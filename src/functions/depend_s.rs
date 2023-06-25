@@ -1,4 +1,4 @@
-fn string_to_vec(string: &str) -> Vec<u8> {
+pub fn string_to_vec(string: &str) -> Vec<u8> {
     let mut out_vec: Vec<u8> = Vec::new();
 
     for character in string.bytes() {
@@ -8,7 +8,7 @@ fn string_to_vec(string: &str) -> Vec<u8> {
     out_vec
 }
 
-fn vec_to_string(vector: &Vec<u8>) -> String {
+pub fn vec_to_string(vector: &Vec<u8>) -> String {
     let mut out_str: String = String::new();
 
     for character in vector {

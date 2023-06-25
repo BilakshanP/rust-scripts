@@ -8,3 +8,4 @@ pub mod base64;
 pub mod conversions;
 pub mod compression;
 pub mod macros_;
+pub mod depend_s;
