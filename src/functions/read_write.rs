@@ -16,6 +16,12 @@ pub fn append_to_file(path: &str, content: &[u8]) -> io::Result<()> {
     Ok(())
 }
 
+fn perform_file_action<F: Fn(&[u8]) -> Vec<u8>>(file_path: &str, func: F) -> Vec<u8> {
+    func(
+        &std::fs::read(file_path).unwrap()
+    )
+}
+
 /// Reads non b64 data as b64 and gives vec
 pub fn read_as_b64(path: &str) -> io::Result<Vec<u8>> {
     Ok(base64::encode(&fs::read(path)?))
