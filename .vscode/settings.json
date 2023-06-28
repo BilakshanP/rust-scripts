@@ -8,6 +8,8 @@
         "./Cargo.toml",
         "./Cargo.toml",
         "./Cargo.toml",
+        "./Cargo.toml",
         "./Cargo.toml"
-    ]
+    ],
+    "python.analysis.typeCheckingMode": "strict"
 }

@@ -109,16 +109,8 @@ pub mod sha2 {
                 .collect()
         }
 
-        pub fn digest(array: &[u8]) -> String {
-            let mut digest_string: String = String::new();
-        
-            for value in array {
-                for ch in format!("{:x}", value).chars() {
-                    digest_string.push(ch)
-                }
-            }
-        
-            digest_string
+        pub fn to_hex(array: &[u8]) -> String {
+            array.iter().map(|x: _| format!("{:x}", x)).collect()
         }
 
         fn rot_right(num: u32, shift: u32) -> u32 {
