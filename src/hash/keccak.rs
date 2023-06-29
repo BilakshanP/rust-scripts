@@ -1,51 +1,33 @@
-#![allow(dead_code)]
-
-
 fn rol_64(num: u128, shift: u128) -> u128 {
-    (
-        (
-            num >> (64 - (shift % 64))
-        ) + (
-            num << (shift % 64)
-        )
-    ) % (1 << 64)
+    (num >> (64 - (shift & 0x3F))) + (num << (shift & 0x3F)) % (1 << 64)
 }
 
 fn load_64(data: &[u128]) -> u128 {
-    data.iter().enumerate().fold(0, |acc: u128, (i , curr) |  acc + (curr << (8 * i)))
+    data
+        .iter()
+        .enumerate()
+        .fold(0, |acc: u128, (i , curr) |  acc + (curr << (8 * i)))
 }
 
 fn store_64(num: u128) -> Vec<u128> {
-    vec![0; 8]
-        .iter()
-        .enumerate()
-        .map(
-            |(i, _)| (num >> (8 * i)) % 256
-        )
+    (0..8)
+        .map(|i| (num >> (i << 3)) % 256)
         .collect()
 }
 
-fn keccak_f1600_on_lanes(lanes: &[Vec<u128>]) -> Vec<Vec<u128>> {
+fn keccak_f1600_on_lanes(lanes: &mut [Vec<u128>]) {
     let mut r: u128 = 1;
 
-    let mut lanes: Vec<Vec<u128>> = lanes.to_vec();
+    // let mut lanes: Vec<Vec<u128>> = lanes.to_vec();
 
     for _ in 0..24 {
-        let c: Vec<u128> = vec![0; 5]
-                            .iter()
-                            .enumerate()
-                            .map(
-                                |(x, _)| lanes[x][0] ^ lanes[x][1] ^ lanes[x][2] ^ lanes[x][3] ^ lanes[x][4]
-                            )
-                            .collect();
+        let c: Vec<u128> = (0..5)
+                                .map(|x| lanes[x][0] ^ lanes[x][1] ^ lanes[x][2] ^ lanes[x][3] ^ lanes[x][4])
+                                .collect();
 
-        let d: Vec<u128> = vec![0; 5]
-                            .iter()
-                            .enumerate()
-                            .map(
-                                |(x, _)| c[(x + 4) % 5] ^ rol_64(c[(x + 1) % 5], 1)
-                            )
-                            .collect();
+            let d: Vec<u128> = (0..5)
+                                    .map(|x| c[(x + 4) % 5] ^ rol_64(c[(x + 1) % 5], 1))
+                                    .collect();
 
         for x in 0..5 {
             for y in 0..5 {
@@ -72,46 +54,29 @@ fn keccak_f1600_on_lanes(lanes: &[Vec<u128>]) -> Vec<Vec<u128>> {
         }
 
         for y in 0..5 {
-            let tl: Vec<u128> = vec![0; 5]
-                                    .iter()
-                                    .enumerate()
-                                    .map(
-                                        |(ix, _)| lanes[ix][y]
-                                    )
+            let tl: Vec<u128> = (0..5)
+                                    .map(|ix| lanes[ix][y])
                                     .collect();
             
             for x in 0..5 {
-                lanes[x][y] = tl[x] ^ (
-                    !tl[(x + 1) % 5] & tl[(x + 2) % 5]
-                )
+                lanes[x][y] = tl[x] ^ (!tl[(x + 1) % 5] & tl[(x + 2) % 5])
             }
         }
 
         for i in 0..7 {
-            r = (
-                (r << 1) ^ (
-                    (r >> 7) * 0x71
-                )
-            ) % 256;
+            r = ((r << 1) ^ ((r >> 7) * 0x71)) % 256;
 
             if r & 2 == 2 {
-                lanes[0][0] ^= 
-                1 << (
-                    (1 << i) - 1
-                )
+                lanes[0][0] ^= 1 << ((1 << i) - 1)
             }
         }
     }
-
-    lanes
 }
 
-
-fn keccak_f1600(bytes: &[u128]) -> Vec<u128> {
+fn keccak_f1600(state: &mut [u128]) {
     let mut lanes: Vec<Vec<u128>> = Vec::with_capacity(5);
 
     let mut index: usize;
-    let mut state: Vec<u128> = vec![0; 200];
 
     for x in 0..5 {
         let mut row: Vec<u128> = Vec::with_capacity(5);
@@ -121,7 +86,7 @@ fn keccak_f1600(bytes: &[u128]) -> Vec<u128> {
 
             row.push(
                 load_64(
-                &bytes[index..(index + 8)]
+                &state[index..(index + 8)]
                 )
             )
         }
@@ -129,7 +94,7 @@ fn keccak_f1600(bytes: &[u128]) -> Vec<u128> {
         lanes.push(row)
     }
 
-    lanes = keccak_f1600_on_lanes(&lanes);
+    keccak_f1600_on_lanes(&mut lanes);
 
     for x in 0..5 {
         let mut values: Vec<u128>;
@@ -142,28 +107,25 @@ fn keccak_f1600(bytes: &[u128]) -> Vec<u128> {
             }
         }
     }
-
-    state
 }
 
-
 pub fn keccak(rate_in_bits: u128, capacity: u128, input_bytes: &[u128], delimited_suffix: u128, output_byte_len: u128) -> Vec<u128> {
-    let mut output_byte_len = output_byte_len;
+    let mut output_byte_len: u128 = output_byte_len;
 
     let mut output_bytes: Vec<u128> = Vec::with_capacity(output_byte_len.try_into().expect("Too high output byte len"));
-    let mut state = vec![0; 200];
+    let mut state: Vec<u128> = vec![0; 200];
 
-    let rate_in_bytes = rate_in_bits / 8;
+    let rate_in_bytes: u128 = rate_in_bits / 8;
 
-    let mut block_size = 0;
-    let mut input_offset = 0;
+    let mut block_size: usize = 0;
+    let mut input_offset: usize = 0;
 
-    if (rate_in_bits + capacity) != 1600 || (rate_in_bits % 8) != 0 {
+    if (rate_in_bits + capacity) != 1600 || rate_in_bits & 7 != 0 { // % 8 -> & 7
         panic!("Invalid args: ribytes + cap = {} != 1600; ribits = {} // 8 != 0", rate_in_bytes + capacity, rate_in_bits)
     }
 
     while input_offset < input_bytes.len() {
-        block_size = (input_bytes.len() - input_offset).min(rate_in_bytes.try_into().unwrap());
+        block_size = (input_bytes.len() - input_offset).min(rate_in_bytes as usize);
 
         for i in 0..block_size{
             state[i] ^= input_bytes[input_offset + i]
@@ -171,9 +133,8 @@ pub fn keccak(rate_in_bits: u128, capacity: u128, input_bytes: &[u128], delimite
 
         input_offset += block_size;
 
-        if block_size as u128 == rate_in_bytes {
-            state = keccak_f1600(&state);
-
+        if block_size == rate_in_bytes as usize {
+            keccak_f1600(&mut state);
             block_size = 0;
         }
     }
@@ -181,22 +142,22 @@ pub fn keccak(rate_in_bits: u128, capacity: u128, input_bytes: &[u128], delimite
     state[block_size] ^= delimited_suffix;
 
     if (delimited_suffix & 0x80) != 0 && block_size as u128 == (rate_in_bytes - 1) {
-        state = keccak_f1600(&state)
+        keccak_f1600(&mut state)
     }
 
     state[(rate_in_bytes - 1) as usize] ^= 0x80;
 
-    state = keccak_f1600(&state);
+    keccak_f1600(&mut state);
 
     while output_byte_len > 0 {
         block_size = output_byte_len.min(rate_in_bytes) as usize;
 
-        output_bytes.append(&mut state[0..block_size].to_vec());
+        output_bytes.extend_from_slice(&state[..block_size]);
 
         output_byte_len -= block_size as u128;
 
         if output_byte_len > 0 {
-            state = keccak_f1600(&state)
+            keccak_f1600(&mut state);
         }
     }
 
@@ -204,7 +165,7 @@ pub fn keccak(rate_in_bits: u128, capacity: u128, input_bytes: &[u128], delimite
 }
 
 #[cfg(test)]
-pub mod keccak_tests {
+pub mod main_tests {
     #[test]
     fn rol_64() {
         assert_eq!(super::rol_64(      999, 999), 549206058074112);
@@ -235,18 +196,13 @@ pub mod keccak_tests {
 
     #[test]
     fn keccak_f1600_on_lanes() {
-        assert_eq!(
-            super::keccak_f1600_on_lanes(
-                &[
-                    vec![0, 0, 0, 0, 0],
-                    vec![0, 0, 0, 0, 0],
-                    vec![0, 0, 0, 0, 0],
-                    vec![0, 0, 0, 0, 0],
-                    vec![0, 0, 0, 0, 0]
-                ]
-            ),
-            
-            vec![
+        let mut data_1: Vec<Vec<u128>> = vec![vec![0, 0, 0, 0, 0], vec![0, 0, 0, 0, 0], vec![0, 0, 0, 0, 0], vec![0, 0, 0, 0, 0], vec![0, 0, 0, 0, 0]];
+        let mut data_2: Vec<Vec<u128>> = vec![vec![1, 2, 3, 4, 5], vec![6, 7, 8, 9, 0], vec![0, 0, 0, 0, 0], vec![1, 2, 3, 4, 5], vec![6, 7, 8, 9, 0]];
+
+        super::keccak_f1600_on_lanes(&mut data_1);
+        super::keccak_f1600_on_lanes(&mut data_2);
+
+        assert_eq!(data_1, vec![
                 vec![17376452488221285863, 18417369716475457492, 16959053435453822517,   424854978622500449, 10668034807192757780],
                 vec![ 9571781953733019530, 10448040663659726788, 12224711289652453635,  7259519967065370866,  1747952066141424100],
                 vec![15391093639620504046, 10113917136857017974,  9342009439668884831,  7004910057750291985,  1654286879329379778],
@@ -255,18 +211,7 @@ pub mod keccak_tests {
             ]
         );
 
-        assert_eq!(
-            super::keccak_f1600_on_lanes(
-                &[
-                    vec![1, 2, 3, 4, 5],
-                    vec![6, 7, 8, 9, 0],
-                    vec![0, 0, 0, 0, 0],
-                    vec![1, 2, 3, 4, 5],
-                    vec![6, 7, 8, 9, 0]
-                ]
-            ),
-            
-            vec![
+        assert_eq!(data_2, vec![
                 vec![ 6269942714399931890,  8933783005774876927, 14361267160555465972,  6505270177192387474,  2404738705400101649],
                 vec![ 6807392100548068022, 15683499745133076168,  2764364400791029454,  2973048327548910661, 10255389283575608402],
                 vec![ 7558976490878912777,  2924156069299676232,  5195951610477572339, 17254513324849854336, 17736849854948220342],
@@ -288,10 +233,11 @@ pub mod keccak_tests {
             v
         }
 
-        assert_eq!(
-            super::keccak_f1600(&build_vector_200()),
+        let mut data = build_vector_200();
 
-            vec![
+        super::keccak_f1600(&mut data);
+
+        assert_eq!(data, vec![
                 250, 124, 213, 218, 245, 145,  40,  18,  33,  41, 118, 220, 167, 229, 248, 184,  94, 183, 117,   2,
                 140,  15, 172, 143,  53,  69,  49, 116, 150,   3, 238,  71,  44, 150, 140, 203, 109, 168, 212,  23,
                 176,  60,  68, 181,  42, 167, 127,  14,  62,  40,  49, 107, 209, 182, 175, 236,   9,  81, 188,   8,
