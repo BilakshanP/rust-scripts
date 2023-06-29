@@ -18,8 +18,6 @@ fn store_64(num: u128) -> Vec<u128> {
 fn keccak_f1600_on_lanes(lanes: &mut [Vec<u128>]) {
     let mut r: u128 = 1;
 
-    // let mut lanes: Vec<Vec<u128>> = lanes.to_vec();
-
     for _ in 0..24 {
         let c: Vec<u128> = (0..5)
                                 .map(|x| lanes[x][0] ^ lanes[x][1] ^ lanes[x][2] ^ lanes[x][3] ^ lanes[x][4])
