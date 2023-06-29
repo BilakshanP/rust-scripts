@@ -23,9 +23,9 @@ fn keccak_f1600_on_lanes(lanes: &mut [Vec<u128>]) {
                                 .map(|x| lanes[x][0] ^ lanes[x][1] ^ lanes[x][2] ^ lanes[x][3] ^ lanes[x][4])
                                 .collect();
 
-            let d: Vec<u128> = (0..5)
-                                    .map(|x| c[(x + 4) % 5] ^ rol_64(c[(x + 1) % 5], 1))
-                                    .collect();
+        let d: Vec<u128> = (0..5)
+                                .map(|x| c[(x + 4) % 5] ^ rol_64(c[(x + 1) % 5], 1))
+                                .collect();
 
         for x in 0..5 {
             for y in 0..5 {
