@@ -4,7 +4,7 @@ use std::{
     fs
 };
 
-use super::base64;
+use super::super::base::base64;
 
 pub fn append_to_file(path: &str, content: &[u8]) -> io::Result<()> {
     fs::OpenOptions::new()

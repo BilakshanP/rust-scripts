@@ -163,7 +163,7 @@ pub fn keccak(rate_in_bits: u128, capacity: u128, input_bytes: &[u128], delimite
 }
 
 #[cfg(test)]
-pub mod main_tests {
+pub mod keccak_test {
     #[test]
     fn rol_64() {
         assert_eq!(super::rol_64(      999, 999), 549206058074112);

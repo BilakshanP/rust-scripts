@@ -6,5 +6,5 @@ pub fn input(prompt: &str) -> io::Result<String> {
     io::stdout().flush()?;
     io::stdin()
         .lock().lines().next()
-        .unwrap().map(|x| x.trim_end().to_owned())
+        .unwrap().map(|x: String| x.trim_end().to_owned())
 }

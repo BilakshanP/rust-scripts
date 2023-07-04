@@ -1,53 +1,76 @@
 ```rust
-// SHAKE128 algorithm
-pub fn shake128(input_bytes: &[u8], output_byte_len: usize) -> Vec<u8> {
-    keccak(1344, 256, input_bytes, 0x1F, output_byte_len)
+enum E {
+    Ex
 }
 
-// SHAKE256 algorithm
-pub fn shake256(input_bytes: &[u8], output_byte_len: usize) -> Vec<u8> {
-    keccak(1088, 512, input_bytes, 0x1F, output_byte_len)
+fn key_num(item: &str) -> Result<(&str, i32), E> {
+    match item.split_once(':') {
+        Some((key, val)) => {
+            match val.parse() {
+                Ok(val) => Ok((key, val)),
+                Err(_) => Err(E::Ex)
+            }
+        }
+
+        None => Err(E::Ex)
+    }
 }
 
-// SHA3-224 algorithm
-pub fn sha3_224(input_bytes: &[u8]) -> Vec<u8> {
-    keccak(1152, 448, input_bytes, 0x06, 224 / 8)
+fn key_num_2(item: & str) -> Result<(& str, i32), E> {
+    if let Some((key, val)) = item.split_once(':') {
+        if let Ok(val) = val.trim().parse() {
+            Ok((key, val))
+        } else {
+            Err(E::Ex)
+        }
+    } else {
+        Err(E::Ex)
+    }
 }
 
-// SHA3-256 algorithm
-pub fn sha3_256(input_bytes: &[u8]) -> Vec<u8> {
-    keccak(1088, 512, input_bytes, 0x06, 256 / 8)
+fn key_num_3(item: & str) -> Result<(& str, i32), E> {
+    if let Some((key, val)) = item.split_once(':') {
+        if let Ok(val) = val.trim().parse() {
+           return Ok((key, val));
+        }
+    }
+
+    Err(E::Ex)
 }
 
-// SHA3-384 algorithm
-pub fn sha3_384(input_bytes: &[u8]) -> Vec<u8> {
-    keccak(832, 768, input_bytes, 0x06, 384 / 8)
+fn key_num_4(item: &str) -> Result<(&str, i32), E> {
+    let Some((key, val)) = item.split_once(':') else {
+        return Err(E::Ex);
+    };
+
+    let Ok(val) = val.trim().parse() else {
+        return Err(E::Ex);
+    };
+
+    Ok((key, val))
 }
 
-// SHA3-512 algorithm
-pub fn sha3_512(input_bytes: &[u8]) -> Vec<u8> {
-    keccak(576, 1024, input_bytes, 0x06, 512 / 8)
+fn key_num_5(item: &str) -> Result<(&str, i32), E> {
+    let (key, val) = item.split_once(':').ok_or(E::Ex)?;
+    let val = val.trim().parse().map_err(|_| E::Ex)?;
+
+    Ok((key, val))
 }
 
-fn main() {
-    let message = b"Hello, world!";
+fn key_num_6(item: &str) -> Result<(&str, i32), E> {
+    let Ok((key, val)) = item.split_once(':').and_then(|(key, val)| val.parse().ok().map(|val| (key, val))).ok_or(E::Ex) else {
+        return Err(E::Ex);
+    };
 
-    let shake128_digest = shake128(message, 64);
-    println!("SHAKE128: {}", to_hex(&shake128_digest));
+    Ok((key, val))
+}
 
-    let shake256_digest = shake256(message, 64);
-    println!("SHAKE256: {}", to_hex(&shake256_digest));
-
-    let sha3_224_digest = sha3_224(message);
-    println!("SHA3-224: {}", to_hex(&sha3_224_digest));
-
-    let sha3_256_digest = sha3_256(message);
-    println!("SHA3-256: {}", to_hex(&sha3_256_digest));
-
-    let sha3_384_digest = sha3_384(message);
-    println!("SHA3-384: {}", to_hex(&sha3_384_digest));
-
-    let sha3_512_digest = sha3_512(message);
-    println!("SHA3-512: {}", to_hex(&sha3_512_digest));
+fn key_num_7(item: &str) -> Result<(&str, i32), E> {
+    item.split_once(':')
+        .and_then(
+            |(key, val)| val.parse().ok().map(
+                |val: i32| (key, val)
+            )
+        ).ok_or(E::Ex)
 }
 ```

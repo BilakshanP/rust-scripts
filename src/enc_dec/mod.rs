@@ -1,5 +1,7 @@
 #[allow(dead_code)]
+#[allow(clippy::needless_doctest_main)]
 
+/// ```
 /// fn main() {
 ///     use functions::miscs::{string_to_vec, vec_to_string};
 /// 
@@ -31,4 +33,5 @@
 ///     println!("Decrypted message: {:?}", decrypted_message);
 ///     println!("Are equal:         {} & {}", original_message == decrypted_message, message == decoded)
 /// }
+/// ```
 pub mod rsa;
