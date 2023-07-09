@@ -1,33 +1,31 @@
-#![allow(dead_code)]
+use super::super::keccak::keccak_u8;
 
-use super::super::keccak::keccak;
-
-pub fn shake_128(input_bytes: &[u128], output_byte_len: u128) -> Vec<u128> {
-    keccak(1344, 256, input_bytes, 0x1F, output_byte_len)
+pub fn shake_128(input_bytes: &[u8], output_byte_len: u16) -> Vec<u8> {
+    keccak_u8(168, input_bytes, 0x1F, output_byte_len)
 }
 
-pub fn shake_256(input_bytes: &[u128], output_byte_len: u128) -> Vec<u128> {
-    keccak(1088, 512, input_bytes, 0x1F, output_byte_len)
+pub fn shake_256(input_bytes: &[u8], output_byte_len: u16) -> Vec<u8> {
+    keccak_u8(136, input_bytes, 0x1F, output_byte_len)
 }
 
-pub fn sha3_224(input_bytes: &[u128]) -> Vec<u128> {
-    keccak(1152, 448, input_bytes, 0x06, 224 / 8)
+pub fn sha3_224(input_bytes: &[u8]) -> Vec<u8> {
+    keccak_u8(144, input_bytes, 0x06, 224 / 8)
 }
 
-pub fn sha3_256(input_bytes: &[u128]) -> Vec<u128> {
-    keccak(1088, 512, input_bytes, 0x06, 256 / 8)
+pub fn sha3_256(input_bytes: &[u8]) -> Vec<u8> {
+    keccak_u8(136, input_bytes, 0x06, 256 / 8)
 }
 
-pub fn sha3_384(input_bytes: &[u128]) -> Vec<u128> {
-    keccak(832, 768, input_bytes, 0x06, 384 / 8)
+pub fn sha3_384(input_bytes: &[u8]) -> Vec<u8> {
+    keccak_u8(104, input_bytes, 0x06, 384 / 8)
 }
 
-pub fn sha3_512(input_bytes: &[u128]) -> Vec<u128> {
-    keccak(576, 1024, input_bytes, 0x06, 512 / 8)
+pub fn sha3_512(input_bytes: &[u8]) -> Vec<u8> {
+    keccak_u8(72, input_bytes, 0x06, 512 / 8)
 }
 
 #[cfg(test)]
-pub mod sha3_test {
+mod sha3_test {
     #[test]
     fn shake_128() {
         assert_eq!(super::shake_128(&[], 0), []);

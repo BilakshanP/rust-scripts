@@ -162,8 +162,14 @@ pub fn keccak(rate_in_bits: u128, capacity: u128, input_bytes: &[u128], delimite
     output_bytes
 }
 
+/// it's a limited definition use [keccak] for more wide number limit.
+pub fn keccak_u8(rate_in_bytes: u16, input_bytes: &[u8], delimited_suffix: u16, output_byte_len: u16) -> Vec<u8> {
+    let rate_in_bits = (rate_in_bytes * 8) as u128;
+    keccak(rate_in_bits, 1600 - rate_in_bits, &input_bytes.iter().map(|byte| *byte as u128).collect::<Vec<u128>>(), delimited_suffix as u128, output_byte_len as u128).iter().map(|byte| *byte as u8).collect()
+}
+
 #[cfg(test)]
-pub mod keccak_test {
+mod keccak_test {
     #[test]
     fn rol_64() {
         assert_eq!(super::rol_64(      999, 999), 549206058074112);

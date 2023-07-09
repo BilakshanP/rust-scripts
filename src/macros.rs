@@ -1,7 +1,7 @@
 #[macro_export]
 macro_rules! _test {
     ( $e:expr ) => {
-        println!("{}={}", stringify!($e), $e)
+        println!("{}={:?}", stringify!($e), $e)
     };
 }
 
@@ -42,5 +42,37 @@ macro_rules! hash_map {
                                                                                 .iter()
                                                                                 .cloned()
                                                                                 .collect();
+    };
+}
+
+#[macro_export]
+macro_rules! r#mod {
+    ( $( $module_name:ident ),* ) => {
+        $( mod $module_name; )*
+    };
+
+    ( pub $( $module_name:ident ),* ) => {
+        $( pub mod $module_name; )*
+    }
+}
+
+#[macro_export]
+macro_rules! r#use {
+    ( $( $module_path:path ),* ) => {
+        $( use $module_path; )*
+    };
+}
+
+#[macro_export]
+macro_rules! mutate {
+    ( $from_var:ident, $to_var:ident, $type:ty ) => {
+        let $to_var = &$from_var as *const $type as usize as *mut $type;
+    };
+}
+
+#[macro_export]
+macro_rules! mutate_as {
+    ( $from_var:ident, $from_type:ty, $to_var:ident, $to_type:ty ) => {
+        let $to_var = &$from_var as *const $from_type as usize as *mut $to_type;
     };
 }
