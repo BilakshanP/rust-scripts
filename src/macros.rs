@@ -13,6 +13,19 @@ macro_rules! bundle_traits {
     };
 }
 
+#[macro_export]
+macro_rules! time_it {
+    ( $token:tt ) => {
+        {
+            let time = std::time::Instant::now();
+
+            let result = $token ;
+
+            (result, time.elapsed())
+        }
+    };
+}
+
 /// If capacity is defined before the types it changes to an immutable, in all other cases it's mutable
 #[macro_export]
 macro_rules! hash_map {
@@ -46,7 +59,14 @@ macro_rules! hash_map {
 }
 
 #[macro_export]
-macro_rules! r#mod {
+macro_rules! convert_to_float {
+    ([$($x:expr),*]) => {
+        [$( $x as f64 ),*]
+    };
+}
+
+#[macro_export]
+macro_rules! module {
     ( $( $module_name:ident ),* ) => {
         $( mod $module_name; )*
     };
@@ -57,7 +77,7 @@ macro_rules! r#mod {
 }
 
 #[macro_export]
-macro_rules! r#use {
+macro_rules! mod_use {
     ( $( $module_path:path ),* ) => {
         $( use $module_path; )*
     };

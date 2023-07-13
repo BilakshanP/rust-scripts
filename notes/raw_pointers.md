@@ -5,6 +5,7 @@ let ptr *const Type = &value;
 let address: usize = ptr as usize;
 let mut_ptr: *mut Type_or_2 = address as *mut Type_or_2;
 // let mut_or_ptr: *const/mut Type_or_2 = &mut/? value;
+// or; let mut_or_ptr = &mut/? value as *const/mut Type_or_2?;
 // a *const can have &mut but not vic-versa;
 // value must be mutable as well
 
