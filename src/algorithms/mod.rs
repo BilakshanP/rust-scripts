@@ -1,2 +1,3 @@
 pub mod sorting;
-pub mod primes;
+pub mod prime_finder;
+pub mod primality_test;

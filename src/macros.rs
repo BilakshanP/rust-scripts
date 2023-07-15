@@ -11,6 +11,11 @@ macro_rules! bundle_traits {
         trait $trait_name: $($traits +)+ {}
         impl<T: $($traits +)+> $trait_name for T {}
     };
+
+    ( pub $trait_name:ident, $($traits:path),+ ) => {
+        pub trait $trait_name: $($traits +)+ {}
+        impl<T: $($traits +)+> $trait_name for T {}
+    };
 }
 
 #[macro_export]

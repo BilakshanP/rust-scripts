@@ -9,11 +9,9 @@ edition = "2021"
 rand = "*" #"0.8.5"
 num = "*"
 flate2 = "*"
-rustacuda = "*"
-rustacuda_derive = "*"
+nalgebra = "0.32.2"
 
-libc = "0.2"
-
+# rustacuda = "*"
 # rayon = "*" #"1.5"
 # sha3 = "*"
 # ferrisgram = "*"
