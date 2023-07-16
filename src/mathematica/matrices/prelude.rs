@@ -7,8 +7,10 @@ pub enum Info<T> {
 pub type Mat = Vec<Vec<f64>>;
 
 pub use super::Matrix;
-pub use Info::{Value, NotCalculated as NC};
 pub use super::super::errors::MatrixError;
+
+pub use Info::{Value, NotCalculated as NC};
+pub use MatrixError::*;
 
 macro_rules! bundle {
     ( $trait_name:ident, $($traits:path),+ ) => {

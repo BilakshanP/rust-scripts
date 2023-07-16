@@ -312,10 +312,10 @@ use std::fmt;
     fn scalar_mul(matrix: &[Vec<f64>], scalar: f64) -> Vec<Vec<f64>> {
         let mut out_mat: Vec<Vec<f64>> = Vec::new();
 
-        for i in 0..matrix[0].len(){
+        for i in 0..matrix.len(){
             let mut tmp_mat: Vec<f64> = Vec::new();
 
-            for j in 0..matrix.len(){
+            for j in 0..matrix[0].len(){
                 tmp_mat.push(matrix[i][j] * scalar);
             }
 
@@ -334,11 +334,11 @@ use std::fmt;
     fn add_mat(matrix_a: &[Vec<f64>], matrix_b: &[Vec<f64>]) -> Vec<Vec<f64>> {
         let mut out_mat: Vec<Vec<f64>> = Vec::new();
 
-        for (i1, i2) in matrix_a.iter().enumerate(){
+        for (i1, j1) in matrix_a.iter().enumerate(){
             let mut tmp_mat: Vec<f64> = Vec::new();
 
-            for (j1, j2) in i2.iter().enumerate() {
-                tmp_mat.push(j2 + matrix_b[i1][j1])
+            for (i2, j2) in j1.iter().enumerate() {
+                tmp_mat.push(j2 + matrix_b[i1][i2])
             }
 
             out_mat.push(tmp_mat)
@@ -480,7 +480,7 @@ use std::fmt;
                     tmp_mat.push(*j2);
                 }
 
-                out_mat.push(tmp_mat);
+            out_mat.push(tmp_mat);
         }
 
         out_mat

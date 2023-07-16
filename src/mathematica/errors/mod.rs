@@ -16,7 +16,10 @@ pub enum MatrixError {
         expected: usize,
         provided: usize
     },
-    NonSquareMatrix,
+    NonSquareMatrix{
+        row: usize,
+        col: usize
+    },
     SingularMatrix,
     NullMatrix,
     NullDeterminant,

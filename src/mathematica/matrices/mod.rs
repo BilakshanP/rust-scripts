@@ -7,7 +7,7 @@ mod trait_defs;
 mod get_set;
 
 mod prelude;
-pub mod internals;
+mod internals;
 
 use prelude::*;
 
