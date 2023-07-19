@@ -11,7 +11,11 @@ use mathematica::angles::Angle;
 
 
 fn main() {
-    println!("{}", V3::new(3., 4., 0.).magnitude_sq());
+    let vec_1 = V3::new(3., 1., 4.);
+    let vec_2 = V3::new(1., -1., 1.);
+    let vec_3 = V3::new(2., 3., 1.);
+
+    println!("{}", V2::new(vec_1, vec_2).area_parallelogram_self());
 }
 
 use rand::{Rng, rngs::ThreadRng};

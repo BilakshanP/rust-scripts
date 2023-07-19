@@ -53,7 +53,27 @@ impl Vector2P {
         (self.vec_1 + self.vec_2) / 2.0
     }
 
+    pub fn area_parallelogram_self(&self) -> f64 {
+        (self.vec_1 / self.vec_2).magnitude()
+    }
+
+    pub fn area_triangle_self(&self) -> f64 {
+        0.5 * self.area_parallelogram_self()
+    }
+
     // operations
+
+    pub fn self_dot(&self) -> f64 {
+        self.vec_1 * self.vec_2
+    }
+
+    pub fn self_cross(&self) -> Vector3D {
+        self.vec_1 / self.vec_2
+    }
+
+    pub fn self_cross_reverse(&self) -> Vector3D {
+        self.vec_2 / self.vec_1
+    }
 
     pub fn section_internal(&self, m: f64, n: f64) -> Vector3D {
         ((m * self.vec_2) + (n * self.vec_1)) / (m + n)
@@ -63,7 +83,7 @@ impl Vector2P {
         ((m * self.vec_2) - (n * self.vec_1)) / (m - n)
     }
 
-    // formation copound checks
+    // formation compound checks
 
     pub fn are_collinear(vec_1: Vector3D, vec_2: Vector3D, vec_3: Vector3D) -> bool {
         let mut mags: [f64; 3] = [(vec_2 - vec_1).magnitude(),(vec_3 - vec_2).magnitude(),(vec_3 - vec_1).magnitude()];

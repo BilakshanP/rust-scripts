@@ -278,6 +278,13 @@ impl Vector3D {
 
     // misc associative
 
+    pub fn area_formed_by_3_vectors(vec_1: Vector3D, vec_2: Vector3D, vec_3: Vector3D) -> f64 {
+        let vec_12: Vector3D = vec_2 - vec_1;
+        let vec_23: Vector3D = vec_3 - vec_1;
+
+        0.5 * (vec_12 / vec_23).magnitude()
+    }
+
     /// Find the angle between two vectors using the provided `dot` product and `vector magnitude`'s.
     /// 
     /// #### _Note: `v1.v2 = ||v1||*||v2||*cos(θ)`_
