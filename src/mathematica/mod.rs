@@ -4,3 +4,5 @@ pub mod matrices;
 pub mod vectors;
 
 pub mod errors;
+
+pub use angles::*;

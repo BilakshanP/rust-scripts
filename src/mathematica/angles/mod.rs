@@ -1,62 +1,122 @@
-#![allow(dead_code)]
-
-use std::fmt;
 use std::f64::consts::PI;
 
-pub enum AngleTypes {
-    Deg(f64),
-    Rad(f64)
-}
+const PI_BY_D180: f64 = PI / 180.0;
+const D180_BY_PI: f64 = 180.0 / PI;
 
+#[derive(Clone, Copy)]
 pub struct Angle {
     deg: f64,
     rad: f64
 }
 
-// getting values
 impl Angle {
-    pub fn get_deg(&self) -> f64 {
+    pub fn new_from_degrees(deg: f64) -> Self {
+        Angle { deg, rad: deg * PI_BY_D180 }
+    }
+
+    pub fn new_from_radians(rad: f64) -> Self {
+        Angle { deg: rad * D180_BY_PI, rad }
+    }
+
+    pub fn normalize(&self) -> Self {
+        *self % 360.0
+    }
+
+    pub fn get(&self) -> (f64, f64) {
+        (self.deg, self.rad)
+    }
+
+    pub fn get_degrees(&self) -> f64 {
         self.deg
     }
 
-    pub fn get_rad(&self) -> f64 {
+    pub fn get_radians(&self) -> f64 {
         self.rad
     }
-}
 
-// initialisation
-impl Angle {
-    pub fn new(val: AngleTypes) -> Angle {
-        match val {
-            AngleTypes::Deg(deg) => Angle { deg, rad: deg * PI / 180.0 },
-            AngleTypes::Rad(rad) => Angle { deg: rad * 180.0 / PI, rad }
-        }
+    pub fn sin(&self) -> f64 {
+        self.rad.sin()
     }
 
-    pub fn new_rad(rad: f64) -> Angle {
-        Angle {
-            deg: rad * 180.0 /PI,
-            rad
-        }
+    pub fn cos(&self) -> f64 {
+        self.rad.cos()
     }
 
-    pub fn new_deg(deg: f64) -> Angle {
-        Angle {
-            deg,
-            rad: deg * PI / 180.0
-        }
+    pub fn tan(&self) -> f64 {
+        self.rad.tan()
     }
 }
 
-// impl for
-impl fmt::Display for Angle {
-    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+impl std::fmt::Display for Angle {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         write!(f, "{}deg", self.deg)
     }
 }
 
-impl fmt::Debug for Angle {
-    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
-        write!(f, "<{}deg {}rad>", self.deg, self.rad)
+impl std::fmt::Debug for Angle {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        write!(f, "< {}deg {}rad >", self.deg, self.rad)
+    }
+}
+
+impl std::ops::Add for Angle {
+    type Output = Self;
+    
+    fn add(self, other: Self) -> Self::Output {
+        Self { deg: self.deg + other.deg, rad: self.rad + other.rad }
+    }
+}
+
+impl std::ops::Sub for Angle {
+    type Output = Self;
+    
+    fn sub(self, other: Self) -> Self::Output {
+        Self { deg: self.deg - other.deg, rad: self.rad - other.rad }
+    }
+}
+
+impl std::ops::Mul<f64> for Angle {
+    type Output = Self;
+    
+    fn mul(self, num: f64) -> Self::Output {
+        Self { deg: self.deg * num, rad: self.rad * num }
+    }
+}
+
+impl std::ops::Div<f64> for Angle {
+    type Output = Self;
+    
+    fn div(self, num: f64) -> Self::Output {
+        Self { deg: self.deg / num, rad: self.rad / num }
+    }
+}
+
+impl std::ops::Rem<f64> for Angle {
+    type Output = Self;
+
+    fn rem(self, num: f64) -> Self::Output {
+        Self::new_from_degrees(self.deg % num)
+    }
+}
+
+impl std::ops::Mul<Angle> for f64 {
+    type Output = Angle;
+
+    fn mul(self, angle: Angle) -> Self::Output {
+        angle * self
+    }
+}
+
+impl std::ops::Neg for Angle {
+    type Output = Self;
+
+    fn neg(self) -> Self::Output {
+        Self { deg: -self.deg, rad: -self.rad }
+    }
+}
+
+impl std::cmp::PartialEq for Angle {
+    fn eq(&self, other: &Self) -> bool {
+        self.rad == other.rad
     }
 }

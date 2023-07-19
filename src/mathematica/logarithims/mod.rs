@@ -1,4 +1,5 @@
 use super::errors::LogarithimError;
+use LogarithimError::*;
 
 pub struct Log {
     arg: f64,
@@ -14,11 +15,11 @@ impl Log {
 impl Log {
     pub fn evaluate(&self) -> Result<f64, LogarithimError> {
         if self.arg < 0.0 {
-            return Err(LogarithimError::InvalidArgument(self.arg));
+            return Err(InvalidArgument(self.arg));
         }
 
         if self.base <= 1.0 {
-            return Err(LogarithimError::InvalidBase(self.base.signum()));
+            return Err(InvalidBase(self.base.signum()));
         }
 
         Ok(self.arg.log(self.base))
@@ -30,7 +31,7 @@ impl std::ops::Add for Log {
 
     fn add(self, rhs: Self) -> Self::Output {
         if self.base != rhs.base {
-            return Err(LogarithimError::DifferentBase(self.base, rhs.base));
+            return Err(DifferentBase(self.base, rhs.base));
         }
 
         Ok(Self { arg: self.arg * rhs.arg, base: self.base })
@@ -42,7 +43,7 @@ impl std::ops::Sub for Log {
 
     fn sub(self, rhs: Self) -> Self::Output {
         if self.base != rhs.base {
-            return Err(LogarithimError::DifferentBase(self.base, rhs.base));
+            return Err(DifferentBase(self.base, rhs.base));
         }
 
         Ok(Self { arg: self.arg / rhs.arg, base: self.base })
