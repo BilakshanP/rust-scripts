@@ -1,5 +1,3 @@
-#![allow(unused)]
-
 /// A comparision sort
 pub fn selection_sort<T: PartialOrd>(arr: &mut [T]) {
     let n: usize = arr.len();
@@ -57,7 +55,7 @@ pub fn insertion_sort<T: PartialOrd + Copy>(arr: &mut [T]) {
 }
 
 /// A comparision sort
-fn merge_sort<T: PartialOrd + Copy>(arr: &mut [T]) {
+pub fn merge_sort<T: PartialOrd + Copy>(arr: &mut [T]) {
     fn merge_sort_internal<T: PartialOrd + Copy>(arr: &mut [T], begin: usize, end: usize) {
         fn merge<T: PartialOrd + Copy>(arr: &mut [T], left: usize, mid: usize, right: usize) {
             let left_arr_len: usize = mid - left + 1;

@@ -16,7 +16,7 @@ pub fn append_to_file(path: &str, content: &[u8]) -> io::Result<()> {
     Ok(())
 }
 
-fn perform_file_action<F: Fn(&[u8]) -> Vec<u8>>(file_path: &str, func: F) -> Vec<u8> {
+pub fn perform_file_action<F: Fn(&[u8]) -> Vec<u8>>(file_path: &str, func: F) -> Vec<u8> {
     func(
         &std::fs::read(file_path).unwrap()
     )

@@ -94,7 +94,7 @@ pub fn sin_cos(x: f64) -> (f64, f64) {
     (sin_result, cos_result)
 }
 
-fn build_f64(mantissa: u64, exponent: i16, sign: i8) -> f64 {
+pub fn build_f64(mantissa: u64, exponent: i16, sign: i8) -> f64 {
     let mut value = mantissa as f64;
     value *= 2.0_f64.powi(exponent as i32);
     if sign.signum() == -1 {
@@ -127,7 +127,7 @@ pub fn solve_quadratic(a: f64, b: f64, c: f64) -> ((Real, Imaginary), (Real, Ima
     }
 }
 
-fn split<T: Copy + From<u8> + std::cmp::PartialOrd + std::ops::DivAssign<T> + std::ops::Rem<Output = T>>(num: T) -> Vec<T> {
+pub fn split<T: Copy + From<u8> + std::cmp::PartialOrd + std::ops::DivAssign<T> + std::ops::Rem<Output = T>>(num: T) -> Vec<T> {
     let mut n: T = num;
     let mut digits: Vec<T> = Vec::new();
 
@@ -141,7 +141,7 @@ fn split<T: Copy + From<u8> + std::cmp::PartialOrd + std::ops::DivAssign<T> + st
     digits
 }
 
-fn big_split(num: num::BigInt) -> Vec<num::BigInt> {
+pub fn big_split(num: num::BigInt) -> Vec<num::BigInt> {
     let mut n: num::BigInt = num;
     let mut digits: Vec<num::BigInt> = Vec::new();
 
