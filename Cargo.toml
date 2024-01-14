@@ -10,6 +10,7 @@ rand = "*" #"0.8.5"
 num = "*"
 flate2 = "*"
 nalgebra = "0.32.2"
+num-bigint = "*"
 
 # rustacuda = "*"
 # rayon = "*" #"1.5"

@@ -87,7 +87,7 @@ pub fn decode(input: &[u8]) -> Vec<u8> {
 
     for c in input {
         if VALID_VALUES[*c as usize] == -1 {
-            if c == &b'=' {
+            if *c == b'=' {
                 break;
             }
 

@@ -211,6 +211,7 @@ impl Matrix {
 
     /// doesn't update parent, lazy
     pub fn inverse(&self) -> Result<Self, MatrixError> {
+        panic!("buggy");
         let (row, col) = self.order();
     
         if !self.is_square {

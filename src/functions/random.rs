@@ -5,27 +5,27 @@ use rand::{
     thread_rng
 };
 
-// inclusive
+/// inclusive
 pub fn gen_random<T: std::cmp::PartialOrd + rand::distributions::uniform::SampleUniform>(start: T, end: T, mut thread: ThreadRng) -> T {
     thread.gen_range(start..=end)
 }
 
-// inclusize
+/// inclusize
 pub fn generate_random_number(start: i32, end: i32) -> i32 {
     rand::thread_rng().gen_range(start..=end)
 }
 
-// inclusive
+/// inclusive
 pub fn generate_random_float(start: f64, end: f64) -> f64 {
     rand::thread_rng().gen_range(start..=end)
 }
 
-// inclusive
+/// inclusive
 pub fn gen_usize(start: usize, end: usize) -> usize {
     gen_random(start, end, rand::thread_rng())
 }
 
-// inclusive
+/// inclusive
 pub fn randomized_list(start: usize, end: usize, n: usize) -> Vec<Vec<usize>> {
     let mut rng: ThreadRng = thread_rng();
     let mut result: Vec<Vec<usize>> = Vec::new();
@@ -66,6 +66,26 @@ pub fn vote_result(vote_sample: Vec<Vec<usize>>) -> Vec<isize> {
     }
 
     result
+}
+
+use std::collections::HashMap;
+
+fn calculate_char_frequency(input_string: &str) -> Vec<(char, usize)> {
+    let mut char_frequency: HashMap<char, usize> = HashMap::new();
+
+    // Count the frequency of each character in the input string
+    for c in input_string.chars() {
+        let counter = char_frequency.entry(c).or_insert(0);
+        *counter += 1;
+    }
+
+    println!("{:?}", char_frequency);
+
+    // Convert the HashMap to a vector of tuples and sort by characters
+    let mut char_frequency_vec: Vec<(char, usize)> = char_frequency.into_iter().collect();
+    char_frequency_vec.sort_by(|a, b| a.0.cmp(&b.0));
+
+    char_frequency_vec
 }
 
 /*

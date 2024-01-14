@@ -56,7 +56,7 @@ pub fn sha256(message: &[u8]) -> Vec<u8> {
             // add t-nth 32bit word of the block, 8 bytes at a time
             w[t] = u32::from_be_bytes(message_block[t * 4..(t + 1) * 4].try_into().unwrap());
         }
-        
+
         for t in 16..64 {
             let term1: u32 = sig1(w[t - 2]);
             let term2: u32 = w[t - 7];
@@ -108,7 +108,14 @@ pub fn sha256(message: &[u8]) -> Vec<u8> {
 }
 
 pub fn to_hex(array: &[u8]) -> String {
-    array.iter().map(|x: _| format!("{:x}", x)).collect()
+    // array.iter().map(|x: _| format!("{:0>2x}", x)).collect()
+    array.iter().fold(String::new(), |s: String, n: &u8| s + &format!("{:0>2x}", *n))
+
+    // let mut res = String::new();
+
+    // array.iter().map(|v: _| write!(&mut res, "{:0>2x}", *v));
+
+    // res
 }
 
 fn rot_right(num: u32, shift: u32) -> u32 {
