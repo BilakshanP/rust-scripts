@@ -6,25 +6,25 @@ use num::Zero;
 /// Quake III inv sqrt algorothm with 0 newtonian iterations.
 /// Use [inv_sqrt_accuracy] for higher accuacy.
 pub fn inv_sqrt(float: f64) -> f64 {
-    let f32_from_i32: f64 = f64::from_bits(
+    let f64_from_u64: f64 = f64::from_bits(
         0x5fe6eb50c7b537a9 - (float.to_bits() >> 1)
     );
 
-    f32_from_i32
+    f64_from_u64
 }
 
 /// Accuracy is clamped between 0 and 6, for 0 use [inv_sqrt] instead.
 pub fn inv_sqrt_accuracy(float: f64, accuracy: u8) -> f64 {
     let halv: f64 = 0.5 * float;
-    let mut f32_from_i32: f64 = f64::from_bits(
+    let mut f64_from_u64: f64 = f64::from_bits(
         0x5fe6eb50c7b537a9 - (float.to_bits() >> 1)
     );
 
     for _ in 0..accuracy.clamp(0, 6) {
-        f32_from_i32 = f32_from_i32 * 1.5 - halv * f32_from_i32.powi(3);
+        f64_from_u64 = f64_from_u64 * 1.5 - halv * f64_from_u64.powi(3);
     }
 
-    f32_from_i32
+    f64_from_u64
 }
 
 pub fn rot_left(num: u32, shift: u32) -> u32 {
