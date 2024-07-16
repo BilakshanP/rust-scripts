@@ -1,12 +1,11 @@
-use rand::{
-    Rng,
-    rngs::ThreadRng,
-    seq::SliceRandom,
-    thread_rng
-};
+use rand::{rngs::ThreadRng, seq::SliceRandom, thread_rng, Rng};
 
 /// inclusive
-pub fn gen_random<T: std::cmp::PartialOrd + rand::distributions::uniform::SampleUniform>(start: T, end: T, mut thread: ThreadRng) -> T {
+pub fn gen_random<T: std::cmp::PartialOrd + rand::distributions::uniform::SampleUniform>(
+    start: T,
+    end: T,
+    mut thread: ThreadRng,
+) -> T {
     thread.gen_range(start..=end)
 }
 
@@ -29,15 +28,15 @@ pub fn gen_usize(start: usize, end: usize) -> usize {
 pub fn randomized_list(start: usize, end: usize, n: usize) -> Vec<Vec<usize>> {
     let mut rng: ThreadRng = thread_rng();
     let mut result: Vec<Vec<usize>> = Vec::new();
-    
+
     let original_list: Vec<usize> = (start..=end).collect();
-    
+
     for _ in 0..n {
         let mut randomized_list: Vec<usize> = original_list.clone();
         randomized_list.shuffle(&mut rng);
         result.push(randomized_list);
     }
-    
+
     result
 }
 
@@ -51,7 +50,7 @@ pub fn vote_result(vote_sample: Vec<Vec<usize>>) -> Vec<isize> {
         match len % 2 {
             0 => i.filter(|&value| value != 0).collect(),
             1 => i.collect(),
-            _ => unreachable!()
+            _ => unreachable!(),
         }
     };
 
@@ -70,7 +69,7 @@ pub fn vote_result(vote_sample: Vec<Vec<usize>>) -> Vec<isize> {
 
 use std::collections::HashMap;
 
-fn calculate_char_frequency(input_string: &str) -> Vec<(char, usize)> {
+pub fn calculate_char_frequency(input_string: &str) -> Vec<(char, usize)> {
     let mut char_frequency: HashMap<char, usize> = HashMap::new();
 
     // Count the frequency of each character in the input string

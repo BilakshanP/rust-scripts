@@ -20,22 +20,20 @@ macro_rules! bundle_traits {
 
 #[macro_export]
 macro_rules! time_it {
-    ( $token:tt ) => {
-        {
-            let time = std::time::Instant::now();
+    ( $token:tt ) => {{
+        let time = std::time::Instant::now();
 
-            let result = $token ;
+        let result = $token;
 
-            (result, time.elapsed())
-        }
-    };
+        (result, time.elapsed())
+    }};
 }
 
 /// If capacity is defined before the types it changes to an immutable, in all other cases it's mutable
 #[macro_export]
 macro_rules! hash_map {
     ( $hash_name:ident, $(($key:expr, $value:expr)),* ) => {
-        let $hash_name: std::collections::HashMap<_, _> = [ $( ($key, $value) )* ]
+        let $hash_name: std::collections::HashMap<_, _> = [ $( ($key, $value), )* ]
                                                                 .iter()
                                                                 .cloned()
                                                                 .collect();

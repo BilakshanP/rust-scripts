@@ -6,9 +6,7 @@ use num::Zero;
 /// Quake III inv sqrt algorothm with 0 newtonian iterations.
 /// Use [inv_sqrt_accuracy] for higher accuacy.
 pub fn inv_sqrt(float: f64) -> f64 {
-    let f64_from_u64: f64 = f64::from_bits(
-        0x5fe6eb50c7b537a9 - (float.to_bits() >> 1)
-    );
+    let f64_from_u64: f64 = f64::from_bits(0x5fe6eb50c7b537a9 - (float.to_bits() >> 1));
 
     f64_from_u64
 }
@@ -16,9 +14,7 @@ pub fn inv_sqrt(float: f64) -> f64 {
 /// Accuracy is clamped between 0 and 6, for 0 use [inv_sqrt] instead.
 pub fn inv_sqrt_accuracy(float: f64, accuracy: u8) -> f64 {
     let halv: f64 = 0.5 * float;
-    let mut f64_from_u64: f64 = f64::from_bits(
-        0x5fe6eb50c7b537a9 - (float.to_bits() >> 1)
-    );
+    let mut f64_from_u64: f64 = f64::from_bits(0x5fe6eb50c7b537a9 - (float.to_bits() >> 1));
 
     for _ in 0..accuracy.clamp(0, 6) {
         f64_from_u64 = f64_from_u64 * 1.5 - halv * f64_from_u64.powi(3);
@@ -61,7 +57,7 @@ pub fn sin(x: f64) -> f64 {
 }
 
 pub fn cos(x: f64) -> f64 {
-    const  TERMS: u32 = 10;
+    const TERMS: u32 = 10;
     let mut result: f64 = 0.0;
     let mut sign: f64 = 1.0;
 
@@ -115,10 +111,9 @@ pub fn solve_quadratic(a: f64, b: f64, c: f64) -> ((Real, Imaginary), (Real, Ima
     let det: f64 = pre_det.abs().sqrt();
 
     match pre_det.partial_cmp(&0.0) {
-        Some(std::cmp::Ordering::Greater) => (
-            ((-b + det) * div_2a, 0.0),
-            ((-b - det) * div_2a, 0.0),
-        ),
+        Some(std::cmp::Ordering::Greater) => {
+            (((-b + det) * div_2a, 0.0), ((-b - det) * div_2a, 0.0))
+        }
         _ => {
             let real: f64 = -b * div_2a;
             let imaginary: f64 = det * div_2a;
@@ -127,7 +122,11 @@ pub fn solve_quadratic(a: f64, b: f64, c: f64) -> ((Real, Imaginary), (Real, Ima
     }
 }
 
-pub fn split<T: Copy + From<u8> + std::cmp::PartialOrd + std::ops::DivAssign<T> + std::ops::Rem<Output = T>>(num: T) -> Vec<T> {
+pub fn split<
+    T: Copy + From<u8> + std::cmp::PartialOrd + std::ops::DivAssign<T> + std::ops::Rem<Output = T>,
+>(
+    num: T,
+) -> Vec<T> {
     let mut n: T = num;
     let mut digits: Vec<T> = Vec::new();
 

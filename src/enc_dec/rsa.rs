@@ -7,7 +7,7 @@ fn fill_primes(primes: &mut HashSet<usize>) {
     let mut seive: Vec<bool> = vec![true; 250];
     seive[0] = false;
     seive[1] = false;
-    
+
     for i in 2..250 {
         for j in ((i * 2)..250).step_by(i) {
             seive[j] = false
@@ -36,7 +36,13 @@ fn pick_random(primes: &mut HashSet<usize>, rng: &mut rand::rngs::ThreadRng) -> 
     ret
 }
 
-fn set_keys(n: &mut usize, public_key: &mut usize, private_key: &mut usize, primes: &mut HashSet<usize>, rng: &mut rand::rngs::ThreadRng) {
+pub fn set_keys(
+    n: &mut usize,
+    public_key: &mut usize,
+    private_key: &mut usize,
+    primes: &mut HashSet<usize>,
+    rng: &mut rand::rngs::ThreadRng,
+) {
     let p: usize = pick_random(primes, rng);
     let q: usize = pick_random(primes, rng);
 
@@ -95,25 +101,21 @@ fn decrypt(encrypted_message_slice: usize, private_key: &usize, n: &usize) -> us
     decrypted_message_slice
 }
 
-fn encoder(message: &[usize], public_key: &usize, n: &usize) -> Vec<usize> {
+pub fn encoder(message: &[usize], public_key: &usize, n: &usize) -> Vec<usize> {
     let mut encoded: Vec<usize> = Vec::with_capacity(message.len());
 
     for message_slice in message {
-        encoded.push(
-            encrypt(*message_slice, public_key, n)
-        )
+        encoded.push(encrypt(*message_slice, public_key, n))
     }
 
     encoded
 }
 
-fn decoder(encrypted_message: &[usize], private_key: &usize, n: &usize) -> Vec<usize> {
+pub fn decoder(encrypted_message: &[usize], private_key: &usize, n: &usize) -> Vec<usize> {
     let mut decoded: Vec<usize> = Vec::with_capacity(encrypted_message.len());
 
     for encrypted_message_slice in encrypted_message {
-        decoded.push(
-            decrypt(*encrypted_message_slice, private_key, n)
-        )
+        decoded.push(decrypt(*encrypted_message_slice, private_key, n))
     }
 
     decoded
