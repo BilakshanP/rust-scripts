@@ -7,38 +7,39 @@ const K: [u32; 64] = [
     0x27b70a85, 0x2e1b2138, 0x4d2c6dfc, 0x53380d13, 0x650a7354, 0x766a0abb, 0x81c2c92e, 0x92722c85,
     0xa2bfe8a1, 0xa81a664b, 0xc24b8b70, 0xc76c51a3, 0xd192e819, 0xd6990624, 0xf40e3585, 0x106aa070,
     0x19a4c116, 0x1e376c08, 0x2748774c, 0x34b0bcb5, 0x391c0cb3, 0x4ed8aa4a, 0x5b9cca4f, 0x682e6ff3,
-    0x748f82ee, 0x78a5636f, 0x84c87814, 0x8cc70208, 0x90befffa, 0xa4506ceb, 0xbef9a3f7, 0xc67178f2
+    0x748f82ee, 0x78a5636f, 0x84c87814, 0x8cc70208, 0x90befffa, 0xa4506ceb, 0xbef9a3f7, 0xc67178f2,
 ];
-
 
 // initial hash values
 const H: [u32; 8] = [
-    0x6a09e667, 0xbb67ae85, 0x3c6ef372, 0xa54ff53a,
-    0x510e527f, 0x9b05688c, 0x1f83d9ab, 0x5be0cd19
+    0x6a09e667, 0xbb67ae85, 0x3c6ef372, 0xa54ff53a, 0x510e527f, 0x9b05688c, 0x1f83d9ab, 0x5be0cd19,
 ];
 
 /// Generate SHA256 hash accprding to the original specification
 pub fn sha256(message: &[u8]) -> Vec<u8> {
-
     // number of bytes
     let length: usize = message.len() * 8;
     let mut message: Vec<u8> = message.to_vec();
-        
+
     message.push(0x80);
-        
+
     while (message.len() * 8 + 64) % 512 != 0 {
         message.push(0x00);
     }
-        
+
     // pad 8 bytes or 64 bits
     message.extend_from_slice(&(length as u64).to_be_bytes());
-        
-    assert_eq!(message.len() * 8 % 512, 0, "Padding incorrect?: {}", message.len());
-        
+
+    assert_eq!(
+        message.len() * 8 % 512,
+        0,
+        "Padding incorrect?: {}",
+        message.len()
+    );
 
     // parsing, contains 64 bytes or 512 bit chunks of initial message
     let blocks: Vec<&[u8]> = message.chunks(64).collect();
-        
+
     let mut h_: [u32; 8] = H;
     let mut w: [u32; 64] = [0; 64];
     let mut a: u32;
@@ -49,7 +50,7 @@ pub fn sha256(message: &[u8]) -> Vec<u8> {
     let mut f: u32;
     let mut g: u32;
     let mut h: u32;
-        
+
     // hash computation
     for message_block in blocks {
         for t in 0..16 {
@@ -62,11 +63,16 @@ pub fn sha256(message: &[u8]) -> Vec<u8> {
             let term2: u32 = w[t - 7];
             let term3: u32 = sig0(w[t - 15]);
             let term4: u32 = w[t - 16];
-        
+
             // append 4 bytes
-            w[t] = modulo_2p32(term1.wrapping_add(term2).wrapping_add(term3).wrapping_add(term4));
+            w[t] = modulo_2p32(
+                term1
+                    .wrapping_add(term2)
+                    .wrapping_add(term3)
+                    .wrapping_add(term4),
+            );
         }
-        
+
         // initalise working variables
         a = h_[0];
         b = h_[1];
@@ -76,11 +82,15 @@ pub fn sha256(message: &[u8]) -> Vec<u8> {
         f = h_[5];
         g = h_[6];
         h = h_[7];
-        
+
         for t in 0..64 {
-            let t1: u32 = h.wrapping_add(ep1(e)).wrapping_add(ch(e, f, g)).wrapping_add(K[t]).wrapping_add(w[t]);
+            let t1: u32 = h
+                .wrapping_add(ep1(e))
+                .wrapping_add(ch(e, f, g))
+                .wrapping_add(K[t])
+                .wrapping_add(w[t]);
             let t2: u32 = ep0(a).wrapping_add(maj(a, b, c));
-        
+
             h = g;
             g = f;
             f = e;
@@ -90,7 +100,7 @@ pub fn sha256(message: &[u8]) -> Vec<u8> {
             b = a;
             a = t1.wrapping_add(t2);
         }
-        
+
         // intermediate hash value
         h_[0] = h_[0].wrapping_add(a);
         h_[1] = h_[1].wrapping_add(b);
@@ -101,25 +111,14 @@ pub fn sha256(message: &[u8]) -> Vec<u8> {
         h_[6] = h_[6].wrapping_add(g);
         h_[7] = h_[7].wrapping_add(h);
     }
-        
-    h_.iter()
-        .flat_map(|&x| x.to_be_bytes().to_vec())
-        .collect()
+
+    h_.iter().flat_map(|&x| x.to_be_bytes().to_vec()).collect()
 }
 
 pub fn to_hex(array: &[u8]) -> String {
-    // array.iter().map(|x: _| format!("{:0>2x}", x)).collect()
-    array.iter().fold(String::new(), |s: String, n: &u8| s + &format!("{:0>2x}", *n))
-
-    // let mut res = String::new();
-
-    // array.iter().map(|v: _| write!(&mut res, "{:0>2x}", *v));
-
-    // res
-}
-
-fn rot_right(num: u32, shift: u32) -> u32 {
-    num.wrapping_shr(shift) | num.wrapping_shl(32_u32.wrapping_sub(shift))
+    array.iter().fold(String::new(), |s: String, n: &u8| {
+        s + &format!("{:0>2x}", *n)
+    })
 }
 
 fn ch(x: u32, y: u32, z: u32) -> u32 {
@@ -131,21 +130,71 @@ fn maj(x: u32, y: u32, z: u32) -> u32 {
 }
 
 fn ep0(x: u32) -> u32 {
-    rot_right(x, 2) ^ rot_right(x, 13) ^ rot_right(x, 22)
+    x.rotate_right(2) ^ x.rotate_right(13) ^ x.rotate_right(22)
 }
 
 fn ep1(x: u32) -> u32 {
-    rot_right(x, 6) ^ rot_right(x, 11) ^ rot_right(x, 25)
+    x.rotate_right(6) ^ x.rotate_right(11) ^ x.rotate_right(25)
 }
 
 fn sig0(x: u32) -> u32 {
-    rot_right(x, 7) ^ rot_right(x, 18) ^ (x >> 3)
+    x.rotate_right(7) ^ x.rotate_right(18) ^ (x >> 3)
 }
 
 fn sig1(x: u32) -> u32 {
-    rot_right(x, 17) ^ rot_right(x, 19) ^ (x >> 10)
+    x.rotate_right(17) ^ x.rotate_right(19) ^ (x >> 10)
 }
 
 fn modulo_2p32(num: u32) -> u32 {
     (num as u64 % 0x100000000) as u32
+}
+
+#[cfg(test)]
+mod test {
+    use super::*;
+
+    #[test]
+    fn test_sha256_empty() {
+        let result = sha256(b"");
+        assert_eq!(
+            to_hex(&result),
+            "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        );
+    }
+
+    #[test]
+    fn test_sha256_abc() {
+        let result = sha256(b"abc");
+        assert_eq!(
+            to_hex(&result),
+            "ba7816bf8f01cfea414140de5dae2223b00361a396177a9cb410ff61f20015ad"
+        );
+    }
+
+    #[test]
+    fn test_sha256_longer_message() {
+        let result = sha256(b"hello world");
+        assert_eq!(
+            to_hex(&result),
+            "b94d27b9934d3e08a52e52d7da7dabfac484efe37a5380ee9088f7ace2efcde9"
+        );
+    }
+
+    #[test]
+    fn test_sha256_repeated_characters() {
+        let result = sha256(b"aaaaaaaaaa");
+        assert_eq!(
+            to_hex(&result),
+            "bf2cb58a68f684d95a3b78ef8f661c9a4e5b09e82cc8f9cc88cce90528caeb27"
+        );
+    }
+
+    #[test]
+    fn test_sha256_numbers() {
+        let result = sha256(b"1234567890");
+        assert_eq!(
+            to_hex(&result),
+            "c775e7b757ede630cd0aa1113bd102661ab38829ca52a6422ab782862f268646"
+        );
+    }
 }

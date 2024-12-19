@@ -6,7 +6,7 @@ edition = "2021"
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
 [dependencies]
-rand = "*" # "0.8.5"
+rand = "*"            # "0.8.5"
 num = "*"
 flate2 = "*"
 nalgebra = "0.32.2"
@@ -14,8 +14,29 @@ num-bigint = "*"
 num-prime = "*"
 num-integer = "*"
 rsa = "*"
+sha2 = "0.10.8"
+aes = "0.7"
+block-modes = "0.8"
+block-padding = "0.3"
+hex = "0.4"
+rug = "1.25.0"
+approx = "*"
+ml-kem = "0.2.1"
+aes-gcm = "0.9"       # or latest version
+ratatui = "0.28.1"
+crossterm = "0.28.1"
+color-eyre = "0.6.3"
+chrono = "*"
 
 
+# cas-attrs = { path = "../cas-rs/cas-attrs" }
+# cas-compute = { path = "../cas-rs/cas-compute" }
+# cas-error = { path = "../cas-rs/cas-error" }
+# cas-graph = { path = "../cas-rs/cas-graph" }
+# cas-math = { path = "../cas-rs/cas-math" }
+# cas-parser = { path = "../cas-rs/cas-parser" }
+
+# regex = "*"
 # num-traits = "0.2.15"
 # rustacuda = "*"
 # rayon = "*" #"1.5"
@@ -25,4 +46,3 @@ rsa = "*"
 # regex = "*"
 # nalgebra = "0.32.2"
 # num-traits = "0.2"
-
